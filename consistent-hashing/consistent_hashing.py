@@ -28,3 +28,23 @@ class HashRing(object):
         key = key.encode('utf-16')
         m.update(key)
         return m.hexdigest(key,16) 
+
+    def get_node(self,string_key):
+        #It returns a corresponding node(server) to the string_key
+
+        return self.get_nodes(self,string_key)
+
+    def get_node_pos(self,string_key):
+
+        #It returns corresponding server in the hash ring to the given request along with its position in the ring
+
+        if not self.ring:
+            return None,None
+        key = self.gen_key(string_key)
+        nodes = self.sorted_keys
+
+        for i in range(len(nodes)):
+            if key <= nodes[i]:       #<= because if a server is removed it will find nearest available server
+                return self.ring(nodes[i]),i  #here nodes[i] is the server and i is its position
+        return self.ring(nodes[0]),0
+
